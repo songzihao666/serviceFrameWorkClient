@@ -153,7 +153,9 @@ public abstract class ServiceClientImp implements ServiceClient {
 			return new Result(500, e.getMessage(), null);
 		}finally {
 			try {
-				pool.returnObject(client);
+				if (client != null) {
+					pool.returnObject(client);
+				}
 			} catch (Exception e2) {
 				// TODO: handle exception
 				logger.error(e2.getMessage(),e2);
