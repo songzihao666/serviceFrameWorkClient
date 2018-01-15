@@ -14,12 +14,10 @@ public class HystrixInvoker {
 			@HystrixProperty(name="coreSize", value="100")
 		}, commandProperties= {@HystrixProperty(name="fallback.isolation.semaphore.maxConcurrentRequests", value="100")})
 	public Result invoke(Client client, Args param) throws Exception {
-		System.out.println("invoke: " + Thread.currentThread().getName());
 		return client.doService(param);
 	}
 	
 	public Result getFallBack(Client client, Args param) throws Exception {
-		System.out.println("fallback: " + Thread.currentThread().getName());
 		return new Result(503, "server too buzy", null);
 	}
 
