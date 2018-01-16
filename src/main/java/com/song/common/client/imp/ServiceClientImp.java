@@ -81,44 +81,45 @@ public abstract class ServiceClientImp implements ServiceClient {
 	}
 	
 	public void refreshServiceClients(Map<String, String> map) {
-		try {
-			readWriteLock.writeLock().lock();
-			if (serviceClients == null) {
-				serviceClients = new HashMap<>();
-				for (String host : map.values()) {
+		
+		if (serviceClients == null) {
+			serviceClients = new HashMap<>();
+			for (String host : map.values()) {
+				String[] hosts = host.split(":");
+				String ip = hosts[0];
+				int port = Integer.valueOf(hosts[1]);
+				ObjectPool<Client> pool = new GenericObjectPool<>(new ServiceClientPool(ip, port), config);
+				serviceClients.put(host, pool);
+			}
+			realClients = serviceClients.values().toArray(new ObjectPool[0]);
+		}else {
+			for (String host : map.values()) {
+				if (serviceClients.get(host) == null) {
 					String[] hosts = host.split(":");
 					String ip = hosts[0];
 					int port = Integer.valueOf(hosts[1]);
 					ObjectPool<Client> pool = new GenericObjectPool<>(new ServiceClientPool(ip, port), config);
 					serviceClients.put(host, pool);
 				}
-				realClients = serviceClients.values().toArray(new ObjectPool[0]);
-			}else {
-				for (String host : map.values()) {
-					if (serviceClients.get(host) == null) {
-						String[] hosts = host.split(":");
-						String ip = hosts[0];
-						int port = Integer.valueOf(hosts[1]);
-						ObjectPool<Client> pool = new GenericObjectPool<>(new ServiceClientPool(ip, port), config);
-						serviceClients.put(host, pool);
-					}
-				}
-				for (String host : serviceClients.keySet()) {
-					if (map.get(host) == null) {
-						serviceClients.get(host).close();
-						serviceClients.remove(host);
-					}
-				}
-				realClients = serviceClients.values().toArray(new ObjectPool[0]);
 			}
-		}catch (Exception e) {
-			// TODO: handle exception
-			logger.error(e.getMessage(),e);
-		} finally {
-			// TODO: handle finally clause
-			readWriteLock.writeLock().unlock();
+			for (String host : serviceClients.keySet()) {
+				if (map.get(host) == null) {
+					serviceClients.get(host).close();
+					serviceClients.remove(host);
+				}
+			}
+			
+			try {
+				readWriteLock.writeLock().lock();
+				realClients = serviceClients.values().toArray(new ObjectPool[0]);
+			}catch (Exception e) {
+				// TODO: handle exception
+				logger.error(e.getMessage(),e);
+			} finally {
+				// TODO: handle finally clause
+				readWriteLock.writeLock().unlock();
+			}	
 		}
-		
 	}
 
 
