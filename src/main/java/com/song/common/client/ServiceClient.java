@@ -4,6 +4,6 @@ import com.song.common.model.Result;
 
 public interface ServiceClient {
 	
-	public Result doService(int type,String data);
+	public Result doService(int type,byte[] data);
 
 }

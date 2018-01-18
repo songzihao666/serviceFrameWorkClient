@@ -1,5 +1,6 @@
 package com.song.common.client.imp;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -125,7 +126,7 @@ public abstract class ServiceClientImp implements ServiceClient {
 
 
 	@Override
-	public Result doService(int type, String data) {
+	public Result doService(int type, byte[] data) {
 		// TODO Auto-generated method stub
 		ObjectPool<Client> pool = null;
 		Client client = null;
@@ -143,7 +144,7 @@ public abstract class ServiceClientImp implements ServiceClient {
 			}
 			ZipkinTraceContext ctx = new ZipkinTraceContext(context.traceId(), context.spanId(), parentId,
 					context.sampled(), context.debug());
-			Args param = new Args(type, data, ctx);
+			Args param = new Args(type, ByteBuffer.wrap(data), ctx);
 			TraceHelper.csStart(s1);
 			Result result = invoker.invoke(client, param);
 			TraceHelper.crFinish(s1);
