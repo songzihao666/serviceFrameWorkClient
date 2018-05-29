@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.song</groupId>
 	<artifactId>serviceFrameWorkClient</artifactId>
-	<version>0.0.7-RELEASE</version>
+	<version>1.0.0-RELEASE</version>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>com.song</groupId>
 			<artifactId>serviceFrameWorkParent</artifactId>
-			<version>0.0.3-RELEASE</version>
+			<version>1.0.0-RELEASE</version>
 		</dependency>
 
 		<dependency>
