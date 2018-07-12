@@ -126,14 +126,14 @@ public abstract class ServiceClientImp implements ServiceClient {
 
 
 	@Override
-	public Result doService(int type, byte[] data) {
+	public Result doService(int type, String jdata, byte[] data) {
 		// TODO Auto-generated method stub
 		ObjectPool<Client> pool = null;
 		Client client = null;
 		try {
 			pool = getPool();
 			if (pool == null) {
-				return new Result(505, "no service instance", null);
+				return new Result(505, "no service instance", null, null);
 			}
 			client = pool.borrowObject();			
 			Span s1 = TraceHelper.getSpan();
@@ -144,7 +144,7 @@ public abstract class ServiceClientImp implements ServiceClient {
 			}
 			ZipkinTraceContext ctx = new ZipkinTraceContext(context.traceId(), context.spanId(), parentId,
 					context.sampled(), context.debug());
-			Args param = new Args(type, ByteBuffer.wrap(data), ctx);
+			Args param = new Args(type, jdata, ByteBuffer.wrap(data), ctx);
 			TraceHelper.csStart(s1);
 			Result result = invoker.invoke(client, param);
 			TraceHelper.crFinish(s1);
@@ -152,7 +152,7 @@ public abstract class ServiceClientImp implements ServiceClient {
 		} catch (Exception e) {
 			// TODO: handle exception
 			logger.error(e.getMessage(),e);
-			return new Result(500, e.getMessage(), null);
+			return new Result(500, e.getMessage(), null, null);
 		}finally {
 			try {
 				if (client != null) {

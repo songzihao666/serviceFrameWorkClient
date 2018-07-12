@@ -23,7 +23,7 @@ public class HystrixInvoker {
 	
 	public Result getFallBack(Client client, Args param, Throwable e) throws Exception {
 		logger.error(e.getMessage(),e);
-		return new Result(503, "server too buzy", null);
+		return new Result(503, "server too buzy", null, null);
 	}
 
 }
