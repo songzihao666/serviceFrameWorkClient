@@ -15,15 +15,15 @@ public class HystrixInvoker {
 	private static Logger logger = LoggerFactory.getLogger(HystrixInvoker.class);
 	
 	@HystrixCommand(fallbackMethod="getFallBack", threadPoolProperties={
-			@HystrixProperty(name="coreSize", value="100")
-		}, commandProperties= {@HystrixProperty(name="fallback.isolation.semaphore.maxConcurrentRequests", value="100")})
+			@HystrixProperty(name="coreSize", value="200")
+		}, commandProperties= {@HystrixProperty(name="fallback.isolation.semaphore.maxConcurrentRequests", value="200")})
 	public Result invoke(Client client, Args param) throws Exception {
 		return client.doService(param);
 	}
 	
 	public Result getFallBack(Client client, Args param, Throwable e) throws Exception {
 		logger.error(e.getMessage(),e);
-		return new Result(503, "server too buzy", null, null);
+		return new Result(503, "Service Unavailable", null, null);
 	}
 
 }
